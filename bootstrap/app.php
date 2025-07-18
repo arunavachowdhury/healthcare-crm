@@ -1,8 +1,15 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use Illuminate\Database\QueryException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,8 +19,38 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function ($e, Request $request) {
+            if($request->wantsJson()){
+                if($e instanceof AuthenticationException) {
+                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
+                }
+                elseif($e instanceof AuthorizationException) {
+                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
+                }
+                elseif($e instanceof ModelNotFoundException) {
+                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_NOT_FOUND'));
+                }
+                elseif($e instanceof NotFoundHttpException) {
+                    return response()->json(['status' => 'error', 'error' => 'Specified URL not found'], config('constants.HTTP_NOT_FOUND'));
+                }
+                elseif($e instanceof MethodNotAllowedException) {
+                    return response()->json(['status' => 'error', 'error' => 'The specified method for the request is invalid'], config('constants.HTTP_METHOD_NOT_ALLOWED'));
+                }
+                elseif($e instanceof QueryException) {
+                    // $errorCode = $e->errorInfo[1];
+                    $errorMsg = $e->errorInfo[2];
+                    return response()->json(['status' => 'error', 'error' => $errorMsg], config('constants.HTTP_INTERNAL_SERVER_ERROR'));
+                }
+                else {
+                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_INTERNAL_SERVER_ERROR'));
+                }
+            }
+        });
     })->create();

@@ -16,6 +16,41 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                @role(\App\Enums\UserRole::ADMIN)
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin/dashboard')">
+                        {{ __('Admin Dashboard') }}
+                    </x-nav-link>
+                </div>
+                @endrole
+                @role(\App\Enums\UserRole::AGENT)
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('agent.dashboard')" :active="request()->routeIs('agent/dashboard')">
+                        {{ __('Agent Dashboard') }}
+                    </x-nav-link>
+                </div>
+                @endrole
+                @role(\App\Enums\UserRole::DOCTOR)
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('doctor.dashboard')" :active="request()->routeIs('doctor/dashboard')">
+                        {{ __('Doctor Dashboard') }}
+                    </x-nav-link>
+                </div>
+                @endrole
+                @role(\App\Enums\UserRole::PAITIENT)
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('paitient.dashboard')" :active="request()->routeIs('paitient/dashboard')">
+                        {{ __('Paitient Dashboard') }}
+                    </x-nav-link>
+                </div>
+                @endrole
+                @role(\App\Enums\UserRole::MANAGER)
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('manager.dashboard')" :active="request()->routeIs('manager/dashboard')">
+                        {{ __('Manager Dashboard') }}
+                    </x-nav-link>
+                </div>
+                @endrole
             </div>
 
             <!-- Settings Dropdown -->
