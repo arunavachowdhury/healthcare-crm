@@ -3,6 +3,7 @@
 use App\Enums\UserRole;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,9 +13,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('admin/dashboard', function() {
-    dd('Admin');
-})->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.dashboard');
+Route::get('admin/dashboard', [AdminDashboardController::class, 'index'])
+        ->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.dashboard');
+
+Route::post('admin/user-role-sync', [AdminDashboardController::class, 'syncUserRoles'])
+        ->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.role-sync');
 
 Route::get('agent/dashboard', function() {
     dd('Agent');
