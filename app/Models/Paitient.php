@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Paitient extends Model
 {
@@ -28,5 +30,13 @@ class Paitient extends Model
         return [
             'insurence_details' => 'array',
         ];
+    }
+
+    public function appointments(): HasMany {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
     }
 }
