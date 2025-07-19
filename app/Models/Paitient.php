@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Observers\PaitientObserver;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy([PaitientObserver::class])]
 class Paitient extends Model
 {
     protected $fillable = [
@@ -38,5 +41,9 @@ class Paitient extends Model
 
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
+    }
+
+    public function audits(): HasMany {
+        return $this->hasMany(PaitientAudit::class);
     }
 }

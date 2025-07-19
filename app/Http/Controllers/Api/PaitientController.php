@@ -64,6 +64,8 @@ class PaitientController extends Controller
      */
     public function destroy(Paitient $paitient): JsonResponse
     {
+        $paitient->audits()->delete();
+        $paitient->appointments()->delete();
         $paitient->delete();
 
         return response()->json(['status'=> 'success']);

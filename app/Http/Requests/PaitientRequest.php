@@ -43,7 +43,7 @@ class PaitientRequest extends FormRequest
             'date_of_birth' => ['required', Rule::date()->format('Y-m-d')],
             'gender' => 'required|in:M,F,O',
             'phone_number' =>'required|unique:paitients,phone_number',
-            'email' => 'unique:paitients,email',
+            'email' => 'nullable|unique:paitients,email',
             'address' => 'nullable',
             'emergency_contact_name' => 'nullable',
             'emergency_contact_phone' => 'nullable',
