@@ -2,16 +2,31 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\UserRole;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use App\Enums\AppointmentStatus;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentStoreRequest;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Http\Requests\AppointmentUpdateRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class AppointmentController extends Controller
+class AppointmentController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            'auth:sanctum',
+            new Middleware('role:'.UserRole::ADMIN->value.'|'.UserRole::AGENT->value.'|'.UserRole::DOCTOR->value, only: ['update']),
+            new Middleware('role:'.UserRole::ADMIN->value.'|'.UserRole::AGENT->value, except: ['update'])
+        ];
+    }
+
     public function index(Request $request): JsonResponse 
     {
         $take = 10; $skip = 0; $page = 1;

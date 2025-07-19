@@ -27,8 +27,4 @@ Route::post('doctor', [DoctorController::class, 'store'])
     ]);
 
 Route::resource('appointment', AppointmentController::class)
-        ->except(['create', 'edit', 'show'])
-        ->middleware([
-            'auth:sanctum',
-            'role:'.UserRole::ADMIN->value.'|'.UserRole::AGENT->value
-        ]);
+        ->except(['create', 'edit', 'show']);

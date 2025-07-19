@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -26,31 +27,54 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function ($e, Request $request) {
-            if($request->wantsJson()){
-                if($e instanceof AuthenticationException) {
-                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
-                }
-                elseif($e instanceof AuthorizationException) {
-                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
-                }
-                elseif($e instanceof ModelNotFoundException) {
-                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_NOT_FOUND'));
-                }
-                elseif($e instanceof NotFoundHttpException) {
-                    return response()->json(['status' => 'error', 'error' => 'Specified URL not found'], config('constants.HTTP_NOT_FOUND'));
-                }
-                elseif($e instanceof MethodNotAllowedException) {
-                    return response()->json(['status' => 'error', 'error' => 'The specified method for the request is invalid'], config('constants.HTTP_METHOD_NOT_ALLOWED'));
-                }
-                elseif($e instanceof QueryException) {
-                    // $errorCode = $e->errorInfo[1];
-                    $errorMsg = $e->errorInfo[2];
-                    return response()->json(['status' => 'error', 'error' => $errorMsg], config('constants.HTTP_INTERNAL_SERVER_ERROR'));
-                }
-                else {
-                    return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_INTERNAL_SERVER_ERROR'));
-                }
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
             }
         });
+
+        $exceptions->render(function (AuthorizationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
+            }
+        });
+
+        $exceptions->render(function (UnauthorizedException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_UNAUTHORIZED'));
+            }
+        });
+
+        $exceptions->render(function (ModelNotFoundException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_NOT_FOUND'));
+            }
+        });
+
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => 'Specified URL not found'], config('constants.HTTP_NOT_FOUND'));
+            }
+        });
+
+        $exceptions->render(function (MethodNotAllowedException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => 'The specified method for the request is invalid'], config('constants.HTTP_METHOD_NOT_ALLOWED'));
+            }
+        });
+
+        $exceptions->render(function (QueryException $e, Request $request) {
+            if ($request->is('api/*')) {
+                $errorMsg = $e->errorInfo[2];
+                return response()->json(['status' => 'error', 'error' => $errorMsg], config('constants.HTTP_INTERNAL_SERVER_ERROR'));
+            }
+        });
+
+        $exceptions->render(function (Exception $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['status' => 'error', 'error' => $e->getMessage()], config('constants.HTTP_INTERNAL_SERVER_ERROR'));
+            }
+        });
+
+
     })->create();

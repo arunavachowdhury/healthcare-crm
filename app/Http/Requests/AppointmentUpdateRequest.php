@@ -2,20 +2,30 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
+use App\Enums\UserRole;
 use App\Models\Appointment;
 use Illuminate\Validation\Rule;
 use App\Enums\AppointmentStatus;
 use Illuminate\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Container\Attributes\CurrentUser;
 
 class AppointmentUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize(
+        #[CurrentUser] User $user
+    ): bool
     {
-        return true;
+        if($user->hasRole(UserRole::DOCTOR)) {
+            $doctor = $user->doctor;
+            return $this->appointment->doctor_id === $doctor->id;
+        }else{
+            return true;
+        }
     }
 
     /**
