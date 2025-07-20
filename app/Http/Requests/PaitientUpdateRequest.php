@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class PaitientUpdateRequest extends FormRequest
+final class PaitientUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return true;
     }
 
@@ -20,8 +21,7 @@ class PaitientUpdateRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -29,16 +29,16 @@ class PaitientUpdateRequest extends FormRequest
             'gender' => 'required|in:M,F,O',
             'phone_number' => [
                 'required',
-                Rule::unique('paitients')->ignore($this->paitient)
+                Rule::unique('paitients')->ignore($this->paitient),
             ],
             'email' => [
                 'nullable',
-                Rule::unique('paitients')->ignore($this->paitient)
+                Rule::unique('paitients')->ignore($this->paitient),
             ],
             'address' => 'nullable',
             'emergency_contact_name' => 'nullable',
             'emergency_contact_phone' => 'nullable',
-            'insurence_details' => 'array'
+            'insurence_details' => 'array',
         ];
     }
 }

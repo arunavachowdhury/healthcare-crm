@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\UserRole;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,24 +16,24 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('admin/dashboard', [AdminDashboardController::class, 'index'])
-        ->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.dashboard');
+    ->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.dashboard');
 
 Route::post('admin/user-role-sync', [AdminDashboardController::class, 'syncUserRoles'])
-        ->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.role-sync');
+    ->middleware(['auth', 'role:'.UserRole::ADMIN->value])->name('admin.role-sync');
 
-Route::get('agent/dashboard', function() {
+Route::get('agent/dashboard', function () {
     dd('Agent');
 })->middleware(['auth', 'role:'.UserRole::AGENT->value])->name('agent.dashboard');
 
-Route::get('doctor/dashboard', function() {
+Route::get('doctor/dashboard', function () {
     dd('Doctor');
 })->middleware(['auth', 'role:'.UserRole::DOCTOR->value])->name('doctor.dashboard');
 
-Route::get('paitient/dashboard', function() {
+Route::get('paitient/dashboard', function () {
     dd('Paitient');
 })->middleware(['auth', 'role:'.UserRole::PAITIENT->value])->name('paitient.dashboard');
 
-Route::get('manager/dashboard', function() {
+Route::get('manager/dashboard', function () {
     dd('Manager');
 })->middleware(['auth', 'role:'.UserRole::MANAGER->value])->name('manager.dashboard');
 

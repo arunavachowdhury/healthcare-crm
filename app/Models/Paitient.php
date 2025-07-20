@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Observers\PaitientObserver;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ObservedBy([PaitientObserver::class])]
-class Paitient extends Model
+final class Paitient extends Model
 {
     protected $fillable = [
         'user_id',
@@ -22,14 +24,13 @@ class Paitient extends Model
         'address',
         'emergency_contact_name',
         'emergency_contact_phone',
-        'insurence_details'
+        'insurence_details',
     ];
 
     /**
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'insurence_details' => 'array',
         ];

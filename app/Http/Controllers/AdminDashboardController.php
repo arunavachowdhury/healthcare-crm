@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 
-class AdminDashboardController extends Controller
+final class AdminDashboardController extends Controller
 {
     public function index(Request $request) {
         $users = User::all();
@@ -19,7 +20,7 @@ class AdminDashboardController extends Controller
     public function syncUserRoles(Request $request) {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'role' => 'required'
+            'role' => 'required',
         ]);
 
         $user = User::find($request->user_id);
