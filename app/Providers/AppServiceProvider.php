@@ -20,7 +20,7 @@ final class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void {
-        // Testing actions
+        // Testing actions check 2
         if (app()->environment('local')) {
             // Dynamically set the host based on the request
             URL::forceRootUrl(config('app.url'));
