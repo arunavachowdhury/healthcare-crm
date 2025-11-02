@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == false
     steps: 
+      - name: Output Context
+        run: echo ${{ toJSON(github.context) }}
+        
       - name: Check if pull request is closed
         uses: actions/github-script@v8
         with:
