@@ -1,0 +1,20 @@
+name: No plans to merge
+on: 
+  pull_request: 
+    types: [closed]
+
+jobs: 
+  no-plan-to-merge: 
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == false
+    steps: 
+      - name: Check if pull request is closed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'no plans to merge 👍',
+            })
