@@ -1,0 +1,57 @@
+networks:
+    application: 
+        driver: bridge
+services:
+  php:
+    # Build our custom Laravel image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: healthcare-app:latest
+    # Expose localhost:80 to NGINX's port 8080
+    ports:
+      - 80:8080
+    depends_on:
+      - database
+    # Mount application code for hot-reloading during development
+    volumes:
+      # Mount entire project for live code changes
+      - .:/var/www/html
+      # Exclude vendor (use container's version to avoid platform conflicts)
+      - /var/www/html/vendor
+      # Exclude node_modules (use container's version)
+      - /var/www/html/node_modules
+      # Keep bootstrap/cache in container for performance
+      - /var/www/html/bootstrap/cache
+    # PHP settings that we can override
+    environment:
+      # PHP Configuration
+      PHP_UPLOAD_MAX_FILE_SIZE: "250M"
+      PHP_OPCACHE_ENABLE: "0"
+      
+      # Laravel Automations (built-in to serversideup/php)
+      AUTORUN_ENABLED: "true"
+      # For development: disable caching so .env changes work
+      AUTORUN_LARAVEL_CONFIG_CACHE: "false"
+      AUTORUN_LARAVEL_ROUTE_CACHE: "false"
+      AUTORUN_LARAVEL_VIEW_CACHE: "false"
+      # Keep storage link enabled
+      AUTORUN_LARAVEL_STORAGE_LINK: "false"
+      # Optional: auto-run migrations (set to "true" if needed)
+      # AUTORUN_LARAVEL_MIGRATION: "false"
+    networks:
+      - application
+  database: 
+    image: 'mysql:8.4'
+    ports:
+      - 3305:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    networks:
+      - application
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data: ~

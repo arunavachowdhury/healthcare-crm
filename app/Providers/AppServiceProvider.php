@@ -21,9 +21,9 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void {
         // Testing actions check 5
-        if (app()->environment('local')) {
-            // Dynamically set the host based on the request
-            URL::forceRootUrl(config('app.url'));
-        }
+        // if (app()->environment('local')) {
+        //     // Dynamically set the host based on the request
+        //     URL::forceRootUrl(config('app.url'));
+        // }
     }
 }
